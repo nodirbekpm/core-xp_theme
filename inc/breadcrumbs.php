@@ -1,108 +1,208 @@
 <?php
+// breadcrumbs.php — put this into your theme and call core_render_breadcrumbs() from templates.
+// Safe, Yoast-free breadcrumb renderer with truncation and CPT label mapping.
+
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-/**
- * Yoast SEO asosida custom breadcrumb renderer
- * - Home ni ko‘rsatmaydi
- * - CPTlar ruscha label bilan chiqadi (CPT ro‘yxatida allaqachon ruscha)
- * - Oxirgi bo‘lakni truncation (…)
- */
 if ( ! function_exists( 'core_render_breadcrumbs' ) ) {
     function core_render_breadcrumbs( $max_len = 60 ) {
-        if ( ! function_exists( 'yoast_breadcrumb' ) ) {
-            return;
-        }
-
-        // Yoast separatorini noyob token bilan almashtiramiz
-        $sep_token  = '|||CORE_BC_SEP|||';
-        $sep_filter = function() use ( $sep_token ) { return ' ' . $sep_token . ' '; };
-        add_filter( 'wpseo_breadcrumb_separator', $sep_filter, 999 );
-
-        $crumbs_html = yoast_breadcrumb( '', '', false );
-
-        remove_filter( 'wpseo_breadcrumb_separator', $sep_filter, 999 );
-
-        if ( empty( $crumbs_html ) ) {
-            return;
-        }
-
-        // Plain text bo‘laklar
-        $text  = wp_strip_all_tags( $crumbs_html );
-        $parts = array_values( array_filter( array_map( 'trim', explode( $sep_token, $text ) ) ) );
-
-        if ( ! $parts ) return;
-
-        // Anchorlar (label -> url)
-        $anchors = [];
-        if ( preg_match_all( '#<a\s[^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)</a>#iu', $crumbs_html, $m, PREG_SET_ORDER ) ) {
-            foreach ( $m as $a ) {
-                $anchors[ trim( wp_strip_all_tags( $a[2] ) ) ] = $a[1];
+        // safe mb helpers
+        $mb_strlen = function( $s ) { return function_exists('mb_strlen') ? mb_strlen($s) : strlen($s); };
+        $mb_substr = function( $s, $start, $len = null ) {
+            if ( function_exists('mb_substr') ) {
+                return is_null($len) ? mb_substr($s, $start) : mb_substr($s, $start, $len);
             }
-        }
-
-        // Home’ni olib tashlash:
-        //  - birinchi label "Home"/"Главная" bo‘lsa
-        //  - yoki birinchi URL home_url bo‘lsa
-        $first_label = $parts[0] ?? '';
-        $first_url   = $anchors[ $first_label ] ?? '';
-        $is_home_label = in_array( mb_strtolower( $first_label ), [ 'home', 'главная' ], true );
-        $is_home_url   = $first_url && trailingslashit( $first_url ) === trailingslashit( home_url( '/' ) );
-        if ( $is_home_label || $is_home_url ) {
-            array_shift( $parts );
-        }
-
-        if ( ! $parts ) return;
-
-        // Oxirgi bo‘lak index
-        $last_index = count( $parts ) - 1;
-
-        // Dizayn strelkasi
-        $arrow = esc_url( get_template_directory_uri() . '/assets/img/icons/arr-right.png' );
-
-        // Truncate helper
-        $truncate = function( $str ) use ( $max_len ) {
-            $s = trim( $str );
-            if ( mb_strlen( $s ) <= $max_len ) return $s;
-            return rtrim( mb_substr( $s, 0, $max_len ), " \t\n\r\0\x0B.,;:!?" ) . ' …';
+            return is_null($len) ? substr($s, $start) : substr($s, $start, $len);
         };
 
-        echo '<ul class="breadcurumbs">';
+        // truncate helper
+        $truncate = function( $str ) use ( $max_len, $mb_strlen, $mb_substr ) {
+            $s = trim( strip_tags( $str ) );
+            if ( $mb_strlen($s) <= $max_len ) return $s;
+            $cut = rtrim( $mb_substr($s, 0, $max_len), " \t\n\r\0\x0B.,;:!?" );
+            return $cut . ' …';
+        };
 
-        foreach ( $parts as $i => $label ) {
-            $is_last   = ( $i === $last_index );
-            $out_label = $is_last ? $truncate( $label ) : $label;
-            $url       = $anchors[ $label ] ?? '';
+        // CPT archive Russian labels map (same as you used before)
+        $ru = [
+            'news'     => 'Новости',
+            'event'    => 'Мероприятия',
+            'document' => 'Документы',
+            'album'    => 'Фотоальбомы',
+            'employee' => 'Сотрудники',
+        ];
 
-            if ( ! $is_last && ! empty( $url ) ) {
-                echo '<li><a href="' . esc_url( $url ) . '">'
-                    . esc_html( $out_label )
-                    . ' <img src="' . $arrow . '" alt=""></a></li>';
+        $items = array(); // each item: ['label'=>..., 'url'=>null|string]
+
+        // Helper to add
+        $add = function( $label, $url = '' ) use ( & $items ) {
+            $items[] = array( 'label' => $label, 'url' => $url );
+        };
+
+        // Do not show home; but if you want home, you can add it here:
+        // $add( 'Главная', home_url('/') );
+
+        // SINGLE POST (including CPT)
+        if ( is_singular() ) {
+            $post = get_queried_object();
+            // If post type not 'post', link to post type archive
+            $pt = get_post_type( $post );
+            if ( $pt && $pt !== 'post' ) {
+                $archive_link = get_post_type_archive_link( $pt );
+                $archive_label = isset($ru[$pt]) ? $ru[$pt] : post_type_archive_title('', false);
+                if ( $archive_link ) $add( $archive_label, $archive_link );
+            } elseif ( $pt === 'post' ) {
+                // regular blog posts -> maybe "Новости" if you map posts to news / or skip
+                // if you want to show category trail instead, handle taxonomy below
+                $cat = get_the_category( $post->ID );
+                if ( ! empty( $cat ) ) {
+                    // use first category parent chain
+                    $c = $cat[0];
+                    $anc = get_ancestors( $c->term_id, 'category', 'taxonomy' );
+                    $anc = array_reverse( $anc );
+                    foreach ( $anc as $aid ) {
+                        $t = get_term( $aid, 'category' );
+                        if ( $t && ! is_wp_error( $t ) ) $add( $t->name, get_term_link($t) );
+                    }
+                    $add( $c->name, get_term_link($c) );
+                } else {
+                    // optionally add "Блог" archive
+                }
+            }
+
+            // For hierarchical taxonomies attached to post (e.g. album_folder), show the first taxonomy path if any
+            $taxonomies = get_object_taxonomies( $post->post_type, 'names' );
+            if ( ! empty( $taxonomies ) ) {
+                foreach ( $taxonomies as $tax ) {
+                    // skip builtin categories if already handled
+                    $terms = wp_get_post_terms( $post->ID, $tax );
+                    if ( ! empty( $terms ) && ! is_wp_error( $terms ) ) {
+                        // pick first term
+                        $t = $terms[0];
+                        // build parent chain
+                        if ( is_taxonomy_hierarchical( $tax ) ) {
+                            $parents = get_ancestors( $t->term_id, $tax, 'taxonomy' );
+                            $parents = array_reverse( $parents );
+                            foreach ( $parents as $pid ) {
+                                $pt = get_term( $pid, $tax );
+                                if ( $pt && ! is_wp_error( $pt ) ) $add( $pt->name, get_term_link($pt) );
+                            }
+                        }
+                        $add( $t->name, get_term_link($t) );
+                        break; // only first taxonomy
+                    }
+                }
+            }
+
+            // finally current post (no URL)
+            $add( get_the_title( $post ) );
+        }
+        // TAXONOMY ARCHIVE (category, custom tax)
+        elseif ( is_category() || is_tag() || is_tax() ) {
+            $term = get_queried_object();
+            if ( $term && ! is_wp_error( $term ) ) {
+                // if taxonomy has post type archive mapping, show that first? skip for simplicity
+                // build parent chain for hierarchical
+                if ( is_taxonomy_hierarchical( $term->taxonomy ) ) {
+                    $parents = get_ancestors( $term->term_id, $term->taxonomy, 'taxonomy' );
+                    $parents = array_reverse( $parents );
+                    foreach ( $parents as $pid ) {
+                        $pt = get_term( $pid, $term->taxonomy );
+                        if ( $pt && ! is_wp_error( $pt ) ) $add( $pt->name, get_term_link($pt) );
+                    }
+                }
+                $add( $term->name );
+            }
+        }
+        // POST TYPE ARCHIVE
+        elseif ( is_post_type_archive() ) {
+            $pt = get_query_var( 'post_type' );
+            if ( is_array( $pt ) ) $pt = reset( $pt );
+            $label = isset($ru[$pt]) ? $ru[$pt] : post_type_archive_title('', false);
+            $add( $label );
+        }
+        // AUTHOR
+        elseif ( is_author() ) {
+            $author = get_queried_object();
+            if ( $author ) {
+                $add( 'Автор: ' . $author->display_name );
+            }
+        }
+        // DATE (year/month/day)
+        elseif ( is_date() ) {
+            if ( is_day() ) {
+                $add( get_the_date( 'Y' ), get_year_link( get_query_var('year') ) );
+                $add( get_the_date( 'F' ), get_month_link( get_query_var('year'), get_query_var('monthnum') ) );
+                $add( get_the_date( 'j F Y' ) );
+            } elseif ( is_month() ) {
+                $add( get_the_date( 'Y' ), get_year_link( get_query_var('year') ) );
+                $add( get_the_date( 'F Y' ) );
             } else {
-                echo '<li>' . esc_html( $out_label ) . '</li>';
+                $add( get_the_date( 'Y' ) );
+            }
+        }
+        // PAGES (hierarchical)
+        elseif ( is_page() ) {
+            $page = get_queried_object();
+            if ( $page ) {
+                $parents = get_post_ancestors( $page );
+                $parents = array_reverse( $parents );
+                foreach ( $parents as $pid ) {
+                    $p = get_post( $pid );
+                    if ( $p ) $add( get_the_title( $p ), get_permalink($p) );
+                }
+                $add( get_the_title( $page ) );
+            }
+        }
+        // SEARCH
+        elseif ( is_search() ) {
+            $add( 'Результаты поиска' );
+        }
+        // 404
+        elseif ( is_404() ) {
+            $add( 'Страница не найдена' );
+        }
+        // Default fallback for archives/home
+        else {
+            // If it's a generic archive (e.g. taxonomy listing) try to show post type archive
+            if ( is_archive() ) {
+                $pt = get_query_var('post_type');
+                if ( $pt ) {
+                    $label = is_array($pt) ? reset($pt) : $pt;
+                    $label = isset($ru[$label]) ? $ru[$label] : post_type_archive_title('', false);
+                    $add( $label );
+                } else {
+                    // nothing specific — show site title as only crumb (but requirement was to not show Home)
+                    $add( get_bloginfo('name') );
+                }
+            } else {
+                // as fallback show current title if any
+                if ( is_singular() ) {
+                    $add( get_the_title() );
+                }
             }
         }
 
+        // If nothing collected, bail.
+        if ( empty( $items ) ) return;
+
+        // Output HTML
+        $arrow = esc_url( get_template_directory_uri() . '/assets/img/icons/arr-right.png' );
+
+        echo '<ul class="breadcurumbs">';
+        $last_index = count( $items ) - 1;
+        foreach ( $items as $i => $it ) {
+            $is_last = ( $i === $last_index );
+            $label_raw = $it['label'];
+            $label_out = $is_last ? $truncate( $label_raw ) : $label_raw;
+            $url = ! empty( $it['url'] ) ? $it['url'] : '';
+
+            if ( ! $is_last && $url ) {
+                echo '<li><a href="' . esc_url( $url ) . '">' . esc_html( $label_out ) . ' <img src="' . $arrow . '" alt=""></a></li>';
+            } else {
+                echo '<li>' . esc_html( $label_out ) . '</li>';
+            }
+        }
         echo '</ul>';
     }
 }
-
-
-
-// Yoast breadcrumb: CPT arxiv nomlarini ruschaga majburan o'zgartirish
-add_filter('wpseo_breadcrumb_links', function ($links) {
-    $ru = [
-        'news'     => 'Новости',
-        'event'    => 'Мероприятия',
-        'document' => 'Документы',
-        'album'    => 'Фотоальбомы',
-        'employee' => 'Сотрудники',
-    ];
-
-    foreach ($links as &$link) {
-        // Yoast CPT arxiv bo'lagi: ['ptarchive' => '{post_type}']
-        if (!empty($link['ptarchive']) && isset($ru[$link['ptarchive']])) {
-            $link['text'] = $ru[$link['ptarchive']];
-        }
-    }
-    return $links;
-}, 20);

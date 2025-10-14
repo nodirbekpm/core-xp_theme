@@ -37,10 +37,11 @@ $events_url = get_post_type_archive_link('event') ?: home_url('/events/');
 $docs_url = get_post_type_archive_link('document') ?: home_url('/documents/');
 $albums_url = get_post_type_archive_link('album') ?: home_url('/albums/');
 $employees_url = get_post_type_archive_link('employee') ?: home_url('/employees/');
+$staffs_url = get_post_type_archive_link('staff') ?: home_url('/staffs/');
 
 // Qo'shimcha bo'limlar (agar keyin alohida sahifa bo'lsa, shu yerda yangilaysan)
 $regulations_url = $docs_url;            // "Регламенты и политики" hozircha documents'ga
-$org_url = $employees_url;       // "Орг структура" hozircha employees arxiviga
+$org_url = $staffs_url;       // "Орг структура" hozircha employees arxiviga
 $vacancies_url = home_url('/vacancies/'); // kerak bo'lsa page yaratiladi
 $chats_url = '#';
 $notifications_url = '#';

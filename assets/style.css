@@ -203,7 +203,7 @@ header .row{
     gap: 8px;
 
     font-size: 16px;
-    line-height: 24px; 
+    line-height: 24px;
     color: var(--default);
     text-decoration: none;
     transition: var(--transition);
@@ -307,14 +307,14 @@ header .row{
     font-family: Inter;
     font-size: 30px;
     font-weight: 500;
-    line-height: 36px; 
+    line-height: 36px;
     color: var(--black);
 }
 .sectitle2{
     font-family: Raleway;
     font-size: clamp(18px, 2vw, 30px);
     font-weight: 700;
-    line-height: 36px; 
+    line-height: 36px;
     color: var(--default);
 }
 .sectitle3{
@@ -328,7 +328,7 @@ header .row{
     font-family: Raleway;
     font-size: 24px;
     font-weight: 700;
-    line-height: 32px; 
+    line-height: 32px;
 }
 .all-content{
     padding: 4px 12px;
@@ -527,7 +527,7 @@ select{
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    
+
     font-size: 16px;
     line-height: 24px;
 
@@ -544,7 +544,7 @@ select{
     display: flex;
     align-items: center;
     gap: 8px;
-    
+
     font-size: 16px;
     line-height: 24px;
 
@@ -648,7 +648,7 @@ textarea{
 }
 .comment-item .date{
     font-size: 16px;
-    line-height: 24px; 
+    line-height: 24px;
     color: var(--gray3);
 }
 .comment-actions{
@@ -828,7 +828,7 @@ textarea{
     background-color: var(--white);
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
-.tab-wrap, 
+.tab-wrap,
 .tab-item{
     width: 100%;
 }
@@ -885,7 +885,7 @@ textarea{
     gap: 10px;
 }
 .albom a{
-    display: flex;   
+    display: flex;
 }
 .albom img{
     max-width: 100%;
@@ -989,7 +989,7 @@ input[type=che]
     font-family: Inter;
     font-size: 48px;
     font-weight: 600;
-    line-height: 57px; 
+    line-height: 57px;
     color: var(--default);
 }
 .vacancy-price{
@@ -1191,6 +1191,82 @@ input[type=che]
 .choise li.selected{
     background-color: var(--green);
     color: var(--white);
+}
+
+.org-chart ul {
+    padding-top: 20px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.org-chart li {
+    list-style-type: none;
+    text-align: center;
+    position: relative;
+    padding: 20px 10px 0 10px;
+}
+
+/* chiziqlar */
+.org-chart li::before,
+.org-chart li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    border-top: 1px solid #E2E8F0;
+    width: 50%;
+    height: 20px;
+}
+
+.org-chart li::before {
+    left: -50%;
+    border-left: 1px solid #E2E8F0;
+}
+
+.org-chart li::after {
+    right: -50%;
+    border-right: 1px solid #E2E8F0;
+}
+
+.org-chart li:only-child::before,
+.org-chart li:only-child::after {
+    display: none;
+}
+
+.org-chart li:first-child::before,
+.org-chart li:last-child::after {
+    border: 0 none;
+}
+
+/* person card */
+.person {
+    background: #fff;
+    border: 1px solid #E2E8F0;
+    border-radius: 10px;
+    padding: 16px 16px 0 16px;
+    display: inline-block;
+    text-align: center;
+}
+
+.person .user-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 10px;
+}
+.person .arr-down{
+    margin: 0 0 -16px 0;
+}
+.person h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.person p {
+    margin: 2px 0 0;
+    font-size: 14px;
+    color: #666;
 }
 
 @media (max-width: 1600px){

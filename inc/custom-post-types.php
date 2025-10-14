@@ -149,6 +149,34 @@ function core_register_cpts_and_taxes() {
     ] );
 
     /**
+     * STAFFS (Орг структура)
+     */
+    register_post_type( 'staff', [
+        'labels' => [
+            'name'                  => __( 'Кадры организации', 'core' ),
+            'singular_name'         => __( 'Кадр организации', 'core' ),
+            'menu_name'             => __( 'Орг структура', 'core' ),
+            'name_admin_bar'        => __( 'Кадр', 'core' ),
+            'add_new'               => __( 'Добавить', 'core' ),
+            'add_new_item'          => __( 'Добавить кадр', 'core' ),
+            'edit_item'             => __( 'Редактировать кадр', 'core' ),
+            'new_item'              => __( 'Новый кадр', 'core' ),
+            'view_item'             => __( 'Просмотр кадра', 'core' ),
+            'search_items'          => __( 'Искать кадры', 'core' ),
+            'not_found'             => __( 'Кадры не найдены', 'core' ),
+            'not_found_in_trash'    => __( 'В корзине кадров не найдено', 'core' ),
+            'all_items'             => __( 'Все кадры', 'core' ),
+            'archives'              => __( 'Список кадров', 'core' ),
+        ],
+        'public'       => true,
+        'show_in_rest' => true,
+        'menu_icon'    => 'dashicons-networking',
+        'supports'     => [ 'title', 'editor', 'thumbnail', 'revisions', 'page-attributes' ],
+        'has_archive'  => true,
+        'rewrite'      => [ 'slug' => 'staffs' ],
+    ] );
+
+    /**
      * TAXONOMIES
      */
 
@@ -223,6 +251,31 @@ function core_register_cpts_and_taxes() {
         'show_admin_column' => true,
         'rewrite'           => [
             'slug'         => 'employees/department',
+            'hierarchical' => true,
+        ],
+    ] );
+
+    // Кадры организации (Орг структура) → Должности
+    register_taxonomy( 'position', [ 'staff' ], [
+        'labels' => [
+            'name'              => __( 'Должности', 'core' ),
+            'singular_name'     => __( 'Должность', 'core' ),
+            'search_items'      => __( 'Искать должности', 'core' ),
+            'all_items'         => __( 'Все должности', 'core' ),
+            'parent_item'       => __( 'Родительская должность', 'core' ),
+            'parent_item_colon' => __( 'Родительская должность:', 'core' ),
+            'edit_item'         => __( 'Редактировать должность', 'core' ),
+            'update_item'       => __( 'Обновить должность', 'core' ),
+            'add_new_item'      => __( 'Добавить должность', 'core' ),
+            'new_item_name'     => __( 'Название новой должности', 'core' ),
+            'menu_name'         => __( 'Должности', 'core' ),
+        ],
+        'hierarchical'      => true,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [
+            'slug'         => 'staffs/position',
             'hierarchical' => true,
         ],
     ] );
