@@ -186,3 +186,73 @@ function core_enqueue_employees_scripts() {
 add_action( 'wp_enqueue_scripts', 'core_enqueue_employees_scripts' );
 
 
+
+/**
+ *  Vacancy logikasi
+ */
+// JS fayllarni ulash
+function theme_enqueue_scripts() {
+    // Vacancies JS
+    wp_enqueue_script(
+        'vacancies-js',
+        get_template_directory_uri() . '/assets/js/vacancies.js',
+        array('jquery'),
+        null,
+        true
+    );
+    // Vacancy-create JS
+    wp_enqueue_script(
+        'vacancy-create-js',
+        get_template_directory_uri() . '/assets/js/vacancy-create.js',
+        array('jquery'),
+        null,
+        true
+    );
+
+    // Resume JS
+    wp_enqueue_script(
+        'resume-js',
+        get_template_directory_uri() . '/assets/js/resume.js',
+        array('jquery'),
+        null,
+        true
+    );
+
+    wp_localize_script('vacancies-js', 'vacancy_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('vacancy_nonce')
+    ));
+
+    wp_localize_script('vacancy-create-js', 'vacancy_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('vacancy_nonce')
+    ));
+
+    wp_localize_script('resume-js', 'resume_ajax', array(
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('resume_nonce')
+    ));
+}
+add_action('wp_enqueue_scripts', 'theme_enqueue_scripts');
+
+// Fayllarni ulash
+require_once get_template_directory() . '/inc/vacancies-functions.php';
+require_once get_template_directory() . '/inc/resumes-functions.php';
+
+
+
+
+/**
+ * Utilities
+ */
+
+// Yordamchi funksiya — term nomlarini stringga aylantirish (AJAX tashqarisida e’lon qilinadi)
+function get_term_names_safe($terms) {
+    if (!$terms || is_wp_error($terms)) return '';
+    return implode(', ', wp_list_pluck($terms, 'name'));
+}
+
+// Maoshni formatlovchi funksiya
+function format_salary($num) {
+    return number_format((float)$num, 0, ',', ' ');
+};

@@ -6,7 +6,7 @@
 :root{
     --black: #000;
     --white: #FFF;
-    --default: #1E293B;
+	--default: #262626;
     --secondary: #1E293B;
     --primary: #3b82f6;
     --higlight: #1e3a8a;
@@ -17,12 +17,14 @@
     --active: #1d4ed8;
     --primary2: #EFF6FF;
     --hover-bg: #F1F5F9;
+	--hover-bg2: #FCFCFC;
     --border: #E2E8F0;
     --gray1: #F8FAFC;
     --gray2: #E2E8F0;
     --gray3: #64748B;
     --gray4: #465161;
     --gray5: #DADEE3;
+	--gray6: #F5F5F5;
     --green: #16AF67;
     --green2: #1DC174;
     --transition: .3s all ease;
@@ -37,7 +39,7 @@ body{
     font-weight: 400;
     line-height: 28px;
     color: var(--default);
-    background-color: var(--hover-bg);
+    background-color: var(--hover-bg2);
 }
 ul, ol{
     list-style: none;
@@ -150,9 +152,8 @@ header .row{
     width: 280px;
     height: calc(100svh - 112px);
     padding: 10px;
-    border-radius: 6px;
+    border-radius: 8px;
     background-color: var(--white);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     transition: var(--transition);
 }
 .min .sidebar-wrapper{
@@ -358,7 +359,7 @@ header .row{
     font-family: Raleway;
     font-size: 24px;
     font-weight: 700;
-    line-height: 32px;
+    line-height: 28px;
     color: var(--default);
     text-decoration: none;
 }
@@ -414,17 +415,24 @@ header .row{
     cursor: pointer;
 }
 .like-icon path{
-    stroke: var(--gray3);
+    stroke: var(--black);
+	stroke-opacity: 0.3;
     stroke-width: 2px;
     fill: none;
     transition: var(--transition);
 }
+.comment-icon path{
+	fill: var(--black);
+	fill-opacity: 0.3;
+}
 .like-icon:hover path{
     stroke: var(--danger);
+	stroke-opacity: 1;
 }
 .like.is-active path{
     fill: var(--danger);
     stroke: var(--danger);
+	stroke-opacity: 1;
 }
 .count{
     font-size: 12px;
@@ -447,13 +455,15 @@ header .row{
     gap: 10px;
 }
 .tag{
-    font-size: 12px;
-    font-weight: 600;
+	font-family: Inter;
+    font-size: 11px;
+    font-weight: 400;
     line-height: 16px;
-    color: var(--gray4);
+	letter-spacing: 0.4px;
+    color: var(--default);
     padding: 3px 7px;
     border-radius: 4px;
-    background-color: var(--gray5);
+    background-color: var(--gray6);
 }
 
 

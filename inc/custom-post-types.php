@@ -177,6 +177,61 @@ function core_register_cpts_and_taxes() {
     ] );
 
     /**
+     * VACANCIES (Вакансии)
+     */
+    register_post_type( 'vacancy', [
+        'labels' => [
+            'name'                  => __( 'Вакансии', 'core' ),
+            'singular_name'         => __( 'Вакансия', 'core' ),
+            'menu_name'             => __( 'Вакансии', 'core' ),
+            'name_admin_bar'        => __( 'Вакансия', 'core' ),
+            'add_new'               => __( 'Добавить', 'core' ),
+            'add_new_item'          => __( 'Добавить вакансию', 'core' ),
+            'edit_item'             => __( 'Редактировать вакансию', 'core' ),
+            'new_item'              => __( 'Новая вакансия', 'core' ),
+            'view_item'             => __( 'Просмотр вакансии', 'core' ),
+            'search_items'          => __( 'Искать вакансии', 'core' ),
+            'not_found'             => __( 'Вакансии не найдены', 'core' ),
+            'not_found_in_trash'    => __( 'В корзине вакансий не найдено', 'core' ),
+            'all_items'             => __( 'Все вакансии', 'core' ),
+            'archives'              => __( 'Архив вакансий', 'core' ),
+        ],
+        'public'       => true,
+        'show_in_rest' => true,
+        'menu_icon'    => 'dashicons-id-alt',
+        'supports'     => [ 'title', 'editor', 'thumbnail', 'revisions' ],
+        'has_archive'  => true,
+        'rewrite'      => [ 'slug' => 'vacancies' ],
+    ] );
+
+    /**
+     * RESUMES (Резюме)
+     */
+    register_post_type( 'resume', [
+        'labels' => [
+            'name'               => __( 'Резюме', 'core' ),
+            'singular_name'      => __( 'Резюме', 'core' ),
+            'menu_name'          => __( 'Резюме', 'core' ),
+            'name_admin_bar'     => __( 'Резюме', 'core' ),
+            'add_new'            => __( 'Добавить', 'core' ),
+            'add_new_item'       => __( 'Добавить резюме', 'core' ),
+            'edit_item'          => __( 'Редактировать резюме', 'core' ),
+            'new_item'           => __( 'Новое резюме', 'core' ),
+            'view_item'          => __( 'Просмотр резюме', 'core' ),
+            'search_items'       => __( 'Искать резюме', 'core' ),
+            'not_found'          => __( 'Резюме не найдено', 'core' ),
+            'not_found_in_trash' => __( 'В корзине резюме не найдено', 'core' ),
+            'all_items'          => __( 'Все резюме', 'core' ),
+            'archives'           => __( 'Архив резюме', 'core' ),
+        ],
+        'public'       => false,
+        'show_ui'      => true,
+        'show_in_menu' => true,
+        'menu_icon'    => 'dashicons-id',
+        'supports'     => [ 'title', 'custom-fields' ],
+    ] );
+
+    /**
      * TAXONOMIES
      */
 
@@ -279,5 +334,146 @@ function core_register_cpts_and_taxes() {
             'hierarchical' => true,
         ],
     ] );
+
+    // Вакансии → Образование
+    register_taxonomy( 'education', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Образование', 'core' ),
+            'singular_name' => __( 'Образование', 'core' ),
+            'menu_name'     => __( 'Образование', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/education' ],
+    ] );
+
+    // Вакансии → Подразделение
+    register_taxonomy( 'vac_department', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Подразделения', 'core' ),
+            'singular_name' => __( 'Подразделение', 'core' ),
+            'menu_name'     => __( 'Подразделения', 'core' ),
+        ],
+        'hierarchical'      => true,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/department' ],
+    ] );
+
+    // Вакансии → Занятость
+    register_taxonomy( 'employment_type', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Занятость', 'core' ),
+            'singular_name' => __( 'Тип занятости', 'core' ),
+            'menu_name'     => __( 'Занятость', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/employment' ],
+    ] );
+
+    // Вакансии → Опыт работы
+    register_taxonomy( 'experience', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Опыт работы', 'core' ),
+            'singular_name' => __( 'Опыт работы', 'core' ),
+            'menu_name'     => __( 'Опыт работы', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/experience' ],
+    ] );
+
+    // Вакансии → Город
+    register_taxonomy( 'city', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Города', 'core' ),
+            'singular_name' => __( 'Город', 'core' ),
+            'menu_name'     => __( 'Города', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/city' ],
+    ] );
+
+    // Вакансии → Формат работы
+    register_taxonomy( 'work_format', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Формат работы', 'core' ),
+            'singular_name' => __( 'Формат работы', 'core' ),
+            'menu_name'     => __( 'Формат работы', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/work-format' ],
+    ] );
+
+    // Вакансии → График
+    register_taxonomy( 'schedule', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'График', 'core' ),
+            'singular_name' => __( 'График', 'core' ),
+            'menu_name'     => __( 'График', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/schedule' ],
+    ] );
+
+    // Вакансии → Гражданство
+    register_taxonomy( 'citizenship', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Гражданство', 'core' ),
+            'singular_name' => __( 'Гражданство', 'core' ),
+            'menu_name'     => __( 'Гражданство', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/citizenship' ],
+    ] );
+
+    // Вакансии → Разрешение на работу
+    register_taxonomy( 'work_permission', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Разрешение на работу', 'core' ),
+            'singular_name' => __( 'Разрешение на работу', 'core' ),
+            'menu_name'     => __( 'Разрешение на работу', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/work-permission' ],
+    ] );
+
+    // Вакансии → Ключевые навыки
+    register_taxonomy( 'skills', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Ключевые навыки', 'core' ),
+            'singular_name' => __( 'Навык', 'core' ),
+            'menu_name'     => __( 'Ключевые навыки', 'core' ),
+        ],
+        'hierarchical'      => false,
+        'show_ui'           => true,
+        'show_in_rest'      => true,
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/skills' ],
+    ] );
+
 }
 add_action( 'init', 'core_register_cpts_and_taxes' );
