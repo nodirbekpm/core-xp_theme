@@ -69,8 +69,7 @@ get_header();
     </div>
 
     <form class="vacanci-form" id="vacanci-form" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="vacancy_id" value="">
-
+        <input type="hidden" name="vacancy_id">
         <div class="form-control">
             <label class='input-wrap'>
                 <p class="input-title">Название вакансии <sup>*</sup></p>
@@ -80,78 +79,187 @@ get_header();
             <div class="form-control">
                 <label class='input-wrap double-input'>
                     <p class="input-title">Заработная плата</p>
-                    <input type="number" placeholder="От" name="salary_from">
-                    <input type="number" placeholder="До" name="salary_to">
+                    <input type="number" name="salary_from" placeholder="От">
+                    <input type="number" name="salary_to" placeholder="До">
                 </label>
 
                 <label class='input-wrap'>
                     <p class="input-title">Образование <sup>*</sup></p>
                     <select name="education" required>
-                        <option value="">Выберите</option>
                         <?php
                         $educations = get_terms(['taxonomy' => 'education', 'hide_empty' => false]);
-                        foreach ($educations as $edu) {
-                            echo '<option value="' . esc_attr($edu->term_id) . '">' . esc_html($edu->name) . '</option>';
+                        foreach ($educations as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
                         }
                         ?>
                     </select>
-                    <ul class="choise">
-                        <?php foreach ($educations as $edu): ?>
-                            <li data-val="<?= esc_attr($edu->term_id) ?>">
-                                <?= esc_html($edu->name) ?>
-                                <img src="<?= get_template_directory_uri(); ?>/assets/img/icons/cansel.svg" alt="">
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
                 </label>
             </div>
         </div>
 
-        <?php
-        $selects = [
-            'vac_department' => 'Подразделение',
-            'employment_type' => 'Занятость',
-            'experience' => 'Опыт работы',
-            'city' => 'Город',
-            'work_format' => 'Формат работы',
-            'schedule' => 'График',
-            'work_hours' => 'Рабочие часы',
-            'citizenship' => 'Гражданство',
-            'work_permission' => 'Разрешение на работу',
-            'skills' => 'Ключевые навыки',
-        ];
-
-        foreach ($selects as $slug => $label):
-            $terms = get_terms(['taxonomy' => $slug, 'hide_empty' => false]);
-            if (is_wp_error($terms) || empty($terms)) {
-                $terms = [];
-            }
-            ?>
-            <div class="form-control">
-            <label class="input-wrap">
-                <p class="input-title"><?= esc_html($label) ?> <sup>*</sup></p>
-                <select name="<?= esc_attr($slug) . ($slug === 'skills' ? '[]' : '') ?>" <?= $slug === 'skills' ? 'multiple' : '' ?> required>
-                    <option value="">Выберите</option>
-                    <?php foreach ($terms as $term): ?>
-                        <?php if (is_object($term)): ?>
-                            <option value="<?= esc_attr($term->term_id) ?>"><?= esc_html($term->name) ?></option>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+        <div class="form-control">
+            <label class='input-wrap'>
+                <p class="input-title">Подразделение <sup>*</sup></p>
+                <select name="vac_department" required>
+                    <?php
+                    $departments = get_terms(['taxonomy' => 'vac_department', 'hide_empty' => false]);
+                    foreach ($departments as $term) {
+                        echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                    }
+                    ?>
                 </select>
+            </label>
 
+            <div class="form-control">
+                <label class='input-wrap'>
+                    <p class="input-title">Занятость <sup>*</sup></p>
+                    <select name="employment_type" required>
+                        <?php
+                        $employment = get_terms(['taxonomy' => 'employment_type', 'hide_empty' => false]);
+                        foreach ($employment as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </label>
+
+                <label class='input-wrap'>
+                    <p class="input-title">Опыт работы <sup>*</sup></p>
+                    <select name="experience" required>
+                        <?php
+                        $experience = get_terms(['taxonomy' => 'experience', 'hide_empty' => false]);
+                        foreach ($experience as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-control">
+            <label class='input-wrap'>
+                <p class="input-title">Город <sup>*</sup></p>
+                <select name="city" required>
+                    <?php
+                    $cities = get_terms(['taxonomy' => 'city', 'hide_empty' => false]);
+                    foreach ($cities as $term) {
+                        echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                    }
+                    ?>
+                </select>
                 <ul class="choise">
-                    <?php foreach ($terms as $term): ?>
-                        <?php if (is_object($term)): ?>
-                            <li data-val="<?= esc_attr($term->term_id) ?>">
-                                <?= esc_html($term->name) ?>
-                                <img src="<?= get_template_directory_uri(); ?>/assets/img/icons/cansel.svg" alt="">
-                            </li>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
+                    <?php
+                    $cities = get_terms(['taxonomy' => 'city', 'hide_empty' => false]);
+                    foreach ($cities as $term) {
+                        echo '<li value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '<img src="<?php echo get_template_directory_uri() ?>/assets/img/icons/cansel.svg" alt=""></li>';
+                    }
+                    ?>
+                </ul>
+            </label>
+
+            <div class="form-control">
+                <label class='input-wrap'>
+                    <p class="input-title">Формат работы <sup>*</sup></p>
+                    <select name="work_format" required>
+                        <?php
+                        $formats = get_terms(['taxonomy' => 'work_format', 'hide_empty' => false]);
+                        foreach ($formats as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </label>
+
+                <label class='input-wrap'>
+                    <p class="input-title">График <sup>*</sup></p>
+                    <select name="schedule" required>
+                        <?php
+                        $schedules = get_terms(['taxonomy' => 'schedule', 'hide_empty' => false]);
+                        foreach ($schedules as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </label>
+
+                <label class='input-wrap'>
+                    <p class="input-title">Рабочие часы <sup>*</sup></p>
+                    <select name="work_hours" required>
+                        <?php
+                        $schedules = get_terms(['taxonomy' => 'work_hours', 'hide_empty' => false, 'orderby' => 'term_id']);
+                        foreach ($schedules as $term) {
+                            echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-control">
+            <label class='input-wrap'>
+                <p class="input-title">Гражданство <sup>*</sup></p>
+                <select name="citizenship" required>
+                    <?php
+                    $citizenship = get_terms(['taxonomy' => 'citizenship', 'hide_empty' => false]);
+                    foreach ($citizenship as $term) {
+                        echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                    }
+                    ?>
+                </select>
+                <ul class="choise">
+                    <?php
+                    $citizenship = get_terms(['taxonomy' => 'citizenship', 'hide_empty' => false]);
+                    foreach ($citizenship as $term) {
+                        echo '<li value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '<img src="<?php echo get_template_directory_uri() ?>/assets/img/icons/cansel.svg" alt=""></li>';
+                    }
+                    ?>
+                </ul>
+            </label>
+
+            <label class='input-wrap'>
+                <p class="input-title">Разрешение на работу <sup>*</sup></p>
+                <select name="work_permission" required>
+                    <?php
+                    $permission = get_terms(['taxonomy' => 'work_permission', 'hide_empty' => false]);
+                    foreach ($permission as $term) {
+                        echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                    }
+                    ?>
+                </select>
+                <ul class="choise">
+                    <?php
+                    $permission = get_terms(['taxonomy' => 'work_permission', 'hide_empty' => false]);
+                    foreach ($permission as $term) {
+                        echo '<li value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '<img src="<?php echo get_template_directory_uri() ?>/assets/img/icons/cansel.svg" alt=""></li>';
+                    }
+                    ?>
                 </ul>
             </label>
         </div>
-        <?php endforeach; ?>
+
+        <div class="form-control">
+            <label class='input-wrap'>
+                <p class="input-title">Ключевые навыки <sup>*</sup></p>
+                <select name="skills" required>
+                    <?php
+                    $skills = get_terms(['taxonomy' => 'skills', 'hide_empty' => false]);
+                    foreach ($skills as $term) {
+                        echo '<option value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '</option>';
+                    }
+                    ?>
+                </select>
+                <ul class="choise">
+                    <?php
+                    $skills = get_terms(['taxonomy' => 'skills', 'hide_empty' => false]);
+                    foreach ($skills as $term) {
+                        echo '<li value="' . esc_attr($term->term_id) . '">' . esc_html($term->name) . '<img src="<?php echo get_template_directory_uri() ?>/assets/img/icons/cansel.svg" alt=""></li>';
+                    }
+                    ?>
+                </ul>
+            </label>
+        </div>
 
         <div class="form-control texts">
             <label class='input-wrap'>

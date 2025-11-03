@@ -433,6 +433,20 @@ function core_register_cpts_and_taxes() {
         'rewrite'           => [ 'slug' => 'vacancies/schedule' ],
     ] );
 
+    // Вакансии → Рабочие часы
+    register_taxonomy( 'work_hours', [ 'vacancy' ], [
+        'labels' => [
+            'name'          => __( 'Рабочие часы', 'core' ),
+            'singular_name' => __( 'Рабочие часы', 'core' ),
+            'menu_name'     => __( 'Рабочие часы', 'core' ),
+        ],
+        'hierarchical'      => false, // Agar sizga "kategoriya/bo'lim" shaklida bo'lishini xohlasangiz, true qiling
+        'show_ui'           => true,
+        'show_in_rest'      => true, // Gutenberg va REST API uchun muhim
+        'show_admin_column' => true,
+        'rewrite'           => [ 'slug' => 'vacancies/work-hours' ],
+    ] );
+
     // Вакансии → Гражданство
     register_taxonomy( 'citizenship', [ 'vacancy' ], [
         'labels' => [

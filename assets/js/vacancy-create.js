@@ -1,26 +1,70 @@
 jQuery(document).ready(function ($) {
 
-    function updateChoiseLists() {
-        $('.vacancy_create_content select').each(function () {
-            const $select = $(this);
-            const $ul = $select.siblings('.choise');
-            if (!$ul.length) return;
-            $ul.empty();
-            const selected = $select.find('option:selected');
-            selected.each(function () {
-                const val = $(this).val();
-                if (!val) return;
-                const text = $(this).text();
-                $ul.append(`<li data-val="${val}">${text}<img src="/wp-content/themes/yourtheme/assets/img/icons/cansel.svg" alt=""></li>`);
+    function initChoise() {
+        document.querySelectorAll('.vacancy_create_tab .input-wrap').forEach(wrap => {
+            const select = wrap.querySelector('select');
+            const choise = wrap.querySelector('.choise');
+            if (!select || !choise) return;
+
+            const lis = Array.from(choise.querySelectorAll('li'));
+            const options = Array.from(select.options);
+
+            // 1️⃣ Li elementlarga data-value biriktiramiz (shu joyni qayta yoqamiz)
+            lis.forEach((li, i) => {
+                if (options[i]) {
+                    li.dataset.value = options[i].value;
+                } else if (!li.dataset.value && li.hasAttribute('value')) {
+                    li.dataset.value = li.getAttribute('value');
+                }
             });
+
+            // 2️⃣ Li bosilganda ishlovchi funksiya
+            lis.forEach(li => {
+                li.addEventListener('click', (e) => {
+                    const value = li.dataset.value;
+                    const isCancel = e.target.closest('img');
+
+                    if (isCancel) {
+                        li.classList.remove('selected');
+                        select.value = "";
+                        select.dispatchEvent(new Event('change', {bubbles: true}));
+                        return;
+                    }
+
+                    lis.forEach(x => x.classList.remove('selected'));
+                    li.classList.add('selected');
+                    if (value !== undefined) {
+                        select.value = value;
+                        select.dispatchEvent(new Event('change', {bubbles: true}));
+                    }
+                });
+            });
+
+            // 3️⃣ Select qiymati o‘zgarsa — li’larni yangilaymiz
+            select.addEventListener('change', () => {
+                const val = select.value;
+                lis.forEach(li => {
+                    if (li.dataset.value == val) {
+                        li.classList.add('selected');
+                    } else {
+                        li.classList.remove('selected');
+                    }
+                });
+            });
+
+            // 4️⃣ Dastlabki sinxronlash
+            // select.dispatchEvent(new Event('change'));
         });
     }
+
 
     function resetForm() {
         $('#vacanci-form')[0].reset();
         $('input[name="vacancy_id"]').val('');
+        $('input').val('');
+        $('textarea').val('');
         $('.tab-btn.is-active').removeClass('is-active');
-        $('ul.choise').empty();
+        initChoise();
     }
 
     function loadVacancy(vacancyId) {
@@ -32,7 +76,11 @@ jQuery(document).ready(function ($) {
                 nonce: vacancyAjax.nonce,
                 vacancy_id: vacancyId
             },
+            beforeSend: function () {
+                $('.vacancy_create_content').addClass('loading');
+            },
             success: function (res) {
+                $('.vacancy_create_content').removeClass('loading');
                 if (res.success) {
                     const v = res.data;
 
@@ -44,12 +92,48 @@ jQuery(document).ready(function ($) {
                     $('textarea[name="requirements"]').val(v.requirements);
                     $('textarea[name="conditions"]').val(v.conditions);
 
+                    initChoise();
+                    // Selectlarga qiymatlarni joylash
                     for (const key in v.terms) {
-                        const termIds = v.terms[key];
-                        $(`select[name="${key}${Array.isArray(termIds) ? '[]' : ''}"]`).val(termIds);
+                        const termIds = v.terms[key].map(String);
+                        const $select = $(`select[name="${key}"]`);
+
+                        console.log(`Key: ${key}`, "termIds:", termIds);
+                        console.log("Select found:", $select.length, " | Options:", $select.find('option').map((i,o)=>o.value).get());
+
+                        if ($select.length) {
+                            // 1️⃣ Avval barcha tanlovlarni tozalaymiz
+                            $select.find('option').prop('selected', false);
+
+                            // 2️⃣ Kelayotgan ID'larni belgilaymiz
+                            termIds.forEach(id => {
+                                $select.find(`option[value="${id}"]`).prop('selected', true);
+                            });
+
+                            // 3️⃣ Selectni yangilash (event trigger)
+                            $select.trigger('change');
+
+                            // 4️⃣ Choise interfeysini ham sinxronlash
+                            const wrap = $select.closest('.input-wrap');
+                            const $choise = wrap.find('.choise');
+                            if ($choise.length) {
+                                const $lis = $choise.find('li');
+                                $lis.removeClass('selected');
+
+                                $lis.each(function () {
+                                    const liVal = $(this).data('value') || $(this).attr('value');
+                                    if (termIds.includes(String(liVal))) {
+                                        $(this).addClass('selected');
+                                    }
+                                });
+                            }
+                        } else {
+                            console.warn(`⚠️ Select not found for key: "${key}"`);
+                        }
                     }
 
-                    updateChoiseLists();
+
+
                 } else {
                     alert('Ошибка загрузки данных');
                 }
@@ -57,7 +141,8 @@ jQuery(document).ready(function ($) {
         });
     }
 
-    $('.tab-menu').on('click', '.tab-btn', function (e) {
+    // Tab bosilganda
+    $('.vacancy_create_tab .tab-menu').on('click', '.tab-btn', function (e) {
         e.preventDefault();
         const vacancyId = $(this).data('id');
         $('.tab-btn').removeClass('is-active');
@@ -65,6 +150,7 @@ jQuery(document).ready(function ($) {
         loadVacancy(vacancyId);
     });
 
+    // Forma submit
     $('#vacanci-form').on('submit', function (e) {
         e.preventDefault();
         const data = $(this).serialize();
@@ -83,20 +169,12 @@ jQuery(document).ready(function ($) {
         });
     });
 
+    // Forma reset
     $('#vacanci-form').on('reset', function (e) {
         e.preventDefault();
         resetForm();
     });
 
-    // Selectlar o'zgarsa choise listni yangilash
-    $('.vacancy_create_content select').on('change', updateChoiseLists);
-
-    // Choiseni o'chirish
-    $(document).on('click', '.choise li img', function () {
-        const $li = $(this).parent();
-        const val = $li.data('val');
-        const $select = $li.closest('.input-wrap').find('select');
-        $select.find(`option[value="${val}"]`).prop('selected', false);
-        $li.remove();
-    });
+    // Sahifa yuklanganda choise’larni ishga tushirish
+    initChoise();
 });

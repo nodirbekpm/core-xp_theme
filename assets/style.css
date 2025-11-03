@@ -129,17 +129,20 @@ header .row{
     object-fit: cover;
     object-position: center;
 }
-.user-name{
-    font-size: 14px;
-    font-weight: 600;
+.header-right .user-name{
+	font-family: Inter;
+    font-size: 13px;
+    font-weight: 700;
     line-height: 20px;
-    color: var(--default);
+    color: rgba(0, 0, 0, 0.85);
 }
 .user-profile .role{
-    font-size: 12px;
+	font-family: Inter;
+    font-size: 11px;
     font-weight: 400;
     line-height: 16px;
-    color: var(--gray3);
+	letter-spacing: 0.4px;
+    color: rgba(0, 0, 0, 0.65);
 }
 
 
@@ -312,11 +315,11 @@ header .row{
     color: var(--black);
 }
 .sectitle2{
-    font-family: Raleway;
-    font-size: clamp(18px, 2vw, 30px);
+    font-family: Inter;
+    font-size: clamp(18px, 2vw, 28px);
     font-weight: 700;
-    line-height: 36px;
-    color: var(--default);
+    line-height: 32px;
+    color: #000000d9;
 }
 .sectitle3{
     font-family: Raleway;
@@ -326,17 +329,19 @@ header .row{
     color: var(--default);
 }
 .block-title{
-    font-family: Raleway;
+    font-family: Inter;
     font-size: 24px;
     font-weight: 700;
-    line-height: 32px;
+    line-height: 28px;
+	color: #000000d9;
 }
 .all-content{
     padding: 4px 12px;
-    font-size: 16px;
+	font-family: Inter;
+    font-size: 13px;
     font-weight: 400;
-    line-height: 24px;
-    color: var(--secondary);
+    line-height: 20px;
+    color: #000000d9;
     text-decoration: none;
 }
 .content-swiper .swiper-slide{
@@ -363,6 +368,10 @@ header .row{
     color: var(--default);
     text-decoration: none;
 }
+.event-date .item-title{
+	font-family: Inter;
+	color: #000000d9;
+}
 .news-item .item-title{
     display: -webkit-box;
     overflow: hidden;
@@ -375,10 +384,11 @@ header .row{
     margin: 10px 0 0 0;
 }
 .desc{
-    font-size: 18px;
+	font-family: Inter;
+    font-size: 17px;
     font-weight: 400;
     line-height: 28px;
-    color: var(--default);
+    color: #000000d9;
 }
 .news-item .desc{
     display: -webkit-box;
@@ -460,7 +470,7 @@ header .row{
     font-weight: 400;
     line-height: 16px;
 	letter-spacing: 0.4px;
-    color: var(--default);
+    color: #000000d9;
     padding: 3px 7px;
     border-radius: 4px;
     background-color: var(--gray6);
@@ -525,7 +535,6 @@ select{
     padding: 20px 40px;
     border-radius: 6px;
     background-color: var(--white);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 .news-top{
     display: flex;
@@ -537,13 +546,15 @@ select{
     display: inline-flex;
     align-items: center;
     gap: 8px;
+	
+	font-family: Inter;
+    font-size: 13px;
+    line-height: 20px;
 
-    font-size: 16px;
-    line-height: 24px;
-
-    padding: 4px 12px;
+    padding: 6px 13px;
     border-radius: 6px;
-    border: 1px solid var(--gray3);
+    border: none;
+	background-color: transparent;
     color: var(--gray3);
     transition: var(--transition);
 }
@@ -568,13 +579,14 @@ select{
     align-items: center;
     gap: 8px;
 
-    padding: 5px 12px;
+    padding: 6px 13px;
     border-radius: 6px;
     background-color: var(--green2);
 
-    font-size: 16px;
+	font-family: Inter;
+    font-size: 13px;
     font-weight: 400;
-    line-height: 24px;
+    line-height: 20px;
     color: var(--white);
     cursor: pointer;
     border: none;
@@ -650,7 +662,7 @@ textarea{
     justify-content: space-between;
     gap: 20px;
 }
-.user-name{
+.comment-item .user-name{
     font-family: Raleway;
     font-size: 20px;
     font-weight: 700;
@@ -694,7 +706,7 @@ textarea{
     width: 434px;
     padding: 40px;
     border-radius: 6px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(0, 0, 0, 0.08);
     background-color: var(--white);
     display: flex;
     flex-direction: column;
@@ -707,24 +719,28 @@ textarea{
     gap: 20px;
 }
 .event-day{
-    padding: 21px 24px;
+    padding: 26px 26px;
     border-radius: 3px;
     background-color: var(--green);
 
-    font-family: Raleway;
-    font-size: 48px;
+    font-family: Inter;
+    font-size: 44px;
     font-weight: 700;
-    line-height: 57px;
+    line-height: 48px;
     color: var(--white);
 }
 .event-date .desc{
     margin: 0;
+    font-family: Inter;
+	font-size: 17px;
+	color: #000000a6;
 }
 .event-desc{
-    font-size: 14px;
+	font-family: Inter;
+    font-size: 13px;
     font-weight: 400;
     line-height: 20px;
-    color: var(--default);
+    color: #000000a6;
 }
 .btn-get{
     display: inline-flex;
@@ -732,13 +748,13 @@ textarea{
     justify-content: center;
     gap: 8px;
     font-family: Inter;
-    font-size: 20px;
+    font-size: 16px;
     font-weight: 400;
-    line-height: 28px;
+    line-height: 24px;
     color: var(--white);
 
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
     background-color: var(--green);
 }
 .event-img{
@@ -769,6 +785,9 @@ textarea{
     overflow-y: auto;
     padding: 10px;
 }
+.tab-menu::-webkit-scrollbar-thumb{
+	background-color: #E8E8E8;
+}
 .tab-btn{
 
 }
@@ -776,11 +795,12 @@ textarea{
     display: flex;
     align-items: center;
     gap: 8px;
-
+	
+	font-family: Inter;
     font-size: 16px;
     font-weight: 400;
     line-height: 24px;
-    color: var(--default);
+    color: #000000d9;
     padding: 12px;
     border-radius: 8px;
     transition: var(--transition);
@@ -809,10 +829,10 @@ textarea{
     padding: 12px 12px 12px 44px;
 }
 .tab-btn.is-active:not(:has(.inner-menu)) .tab-head{
-    background-color: #EDFBF4;
+    background-color: #E0F5EA;
 }
 .tab-head:hover{
-    background-color: #EDFBF4;
+    background-color: #E0F5EA;
 }
 
 
@@ -821,11 +841,11 @@ textarea{
     align-items: center;
     gap: 10px;
 
-    font-family: Raleway;
+    font-family: Inter;
     font-size: 20px;
     font-weight: 700;
-    line-height: 28px;
-    color: var(--default);
+    line-height: 24px;
+    color: #000000d9;
 }
 .regulation{
     display: flex;
@@ -836,7 +856,6 @@ textarea{
     padding: 20px;
     border-radius: 6px;
     background-color: var(--white);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 .tab-wrap,
 .tab-item{
@@ -955,10 +974,10 @@ textarea{
 }
 .job-title{
     font-family: Inter;
-    font-size: 18px;
-    font-weight: 500;
-    line-height: 28px;
-    color: var(--default);
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.85);
     margin: 0 0 6px 0;
 }
 .job-info{
@@ -969,17 +988,18 @@ textarea{
 }
 .job-price,
 .job-location{
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 24px;
-    color: var(--gray3);
+    font-family: Inter;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: 24px;
+	color: #1E293B;
 }
 
 .vacancy{
     padding: 20px;
     border-radius: 6px;
     background-color: var(--white);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.10), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -993,6 +1013,22 @@ textarea{
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+.vacancy-title{
+	font-family: Inter;
+	font-size: 50px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 56px;
+	color: rgba(0, 0, 0, 0.85);
+}
+.vacancy-salary{
+	font-family: Inter;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 28px;
+	color: rgba(0, 0, 0, 0.85);
 }
 input[type=che]
 .vacancy-title{
@@ -1052,7 +1088,7 @@ input[type=che]
     padding: 24px;
 }
 .close-modal{
-    padding: 5px;
+    padding: 6px 13px;
     cursor: pointer;
 }
 .modal-body{
@@ -1223,19 +1259,19 @@ input[type=che]
     content: '';
     position: absolute;
     top: 0;
-    border-top: 1px solid #E2E8F0;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
     width: 50%;
     height: 20px;
 }
 
 .org-chart li::before {
     left: -50%;
-    border-left: 1px solid #E2E8F0;
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .org-chart li::after {
     right: -50%;
-    border-right: 1px solid #E2E8F0;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .org-chart li:only-child::before,
@@ -1251,8 +1287,8 @@ input[type=che]
 /* person card */
 .person {
     background: #fff;
-    border: 1px solid #E2E8F0;
-    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
     padding: 16px 16px 0 16px;
     display: inline-block;
     text-align: center;
@@ -1263,14 +1299,17 @@ input[type=che]
     height: 60px;
     border-radius: 50%;
     object-fit: cover;
-    margin-bottom: 10px;
 }
 .person .arr-down{
     margin: 0 0 -16px 0;
 }
 .person h3 {
+	font-family: Inter;
+	font-size: 13px;
+	font-weight: 700;
+	line-height: 20px;
+	color: rgba(0, 0, 0, 0.85);
     margin: 0;
-    font-size: 16px;
 }
 
 .person p {
